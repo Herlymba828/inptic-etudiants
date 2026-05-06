@@ -15,7 +15,7 @@ contactPoints:
       - uid: email-inptic-rh-receiver
         type: email
         settings:
-          addresses: admin@example.com
+          addresses: herlymba828@gmail.com
           singleEmail: true
         disableResolveMessage: false
 

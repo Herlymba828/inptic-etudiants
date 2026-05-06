@@ -3,6 +3,7 @@
 *.env
 .env.*
 !.env.example
+ACCES.md
 
 # Python
 __pycache__/
