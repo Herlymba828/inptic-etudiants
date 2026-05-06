@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.452.3-lts-jdk17
+FROM jenkins/jenkins:lts-jdk17
 
 # Désactiver le wizard de setup (géré par JCasC)
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
