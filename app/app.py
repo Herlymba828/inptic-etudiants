@@ -2,7 +2,7 @@
 """API INPTIC RH - Gestion des étudiants"""
 from flask import Flask, request, jsonify, send_from_directory
 from models import db, Etudiant
-from email_service import send_email
+from email_service import send_email_async
 from metrics import (
     etudiants_ajoutes_total,
     etudiants_supprimes_total,
@@ -118,7 +118,7 @@ def ajouter_etudiant():
         etudiants_ajoutes_total.inc()
         etudiants_actifs.inc()
         
-        # 📧 Envoi email AJOUT
+        # 📧 Envoi email AJOUT (asynchrone - non-bloquant)
         subject = f"✅ Nouvel étudiant ajouté — {etudiant.prenom} {etudiant.nom}"
         body = f"""
 Un nouvel étudiant a été enregistré dans INPTIC RH.
@@ -135,9 +135,9 @@ Un nouvel étudiant a été enregistré dans INPTIC RH.
 📌 Action : AJOUT
 """
         
-        result = send_email(subject, body, DEST_EMAIL)
-        if result:
-            emails_envoyes_total.inc()
+        # Envoi asynchrone (ne bloque pas la réponse HTTP)
+        send_email_async(subject, body, DEST_EMAIL)
+        emails_envoyes_total.inc()
         
         return jsonify(etudiant.to_dict()), 201
         
@@ -240,7 +240,7 @@ def supprimer_etudiant(id):
         etudiants_supprimes_total.inc()
         etudiants_actifs.dec()
         
-        # 📧 Envoi email SUPPRESSION
+        # 📧 Envoi email SUPPRESSION (asynchrone - non-bloquant)
         subject = f"🗑️ Étudiant supprimé — {prenom} {nom}"
         body = f"""
 Un étudiant a été supprimé de INPTIC RH.
@@ -256,9 +256,9 @@ Un étudiant a été supprimé de INPTIC RH.
 📌 Action : SUPPRESSION
 """
         
-        result = send_email(subject, body, DEST_EMAIL)
-        if result:
-            emails_envoyes_total.inc()
+        # Envoi asynchrone (ne bloque pas la réponse HTTP)
+        send_email_async(subject, body, DEST_EMAIL)
+        emails_envoyes_total.inc()
         
         return jsonify({'message': 'Étudiant supprimé avec succès'})
     except Exception as e:

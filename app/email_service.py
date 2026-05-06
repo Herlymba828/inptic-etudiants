@@ -3,9 +3,17 @@
 import smtplib
 import ssl
 import os
+import threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+
+def send_email_async(subject, body, to_email):
+    """Envoie un email de manière asynchrone (non-bloquant)"""
+    thread = threading.Thread(target=send_email, args=(subject, body, to_email))
+    thread.daemon = True
+    thread.start()
+    return True
 
 def send_email(subject, body, to_email):
     """
@@ -13,18 +21,19 @@ def send_email(subject, body, to_email):
     Émetteur : ingridboussoyi@gmail.com
     Destinataire : herlymba828@gmail.com
     """
-    # Utiliser les variables SMTP_* du .env
-    gmail_user = os.getenv('SMTP_USER', os.getenv('GMAIL_USER', 'ingridboussoyi@gmail.com'))
-    gmail_password = os.getenv('SMTP_PASSWORD', os.getenv('GMAIL_APP_PASSWORD', ''))
-    
-    # Nettoyer le mot de passe (sans espaces)
-    password = gmail_password.replace(' ', '').strip()
-    
-    if not gmail_user or not password:
-        print("❌ Configuration email manquante")
-        print(f"   SMTP_USER = {gmail_user}")
-        print(f"   SMTP_PASSWORD = {'***' if password else 'VIDE'}")
-        return False
+    try:
+        # Utiliser les variables SMTP_* du .env
+        gmail_user = os.getenv('SMTP_USER', os.getenv('GMAIL_USER', 'ingridboussoyi@gmail.com'))
+        gmail_password = os.getenv('SMTP_PASSWORD', os.getenv('GMAIL_APP_PASSWORD', ''))
+        
+        # Nettoyer le mot de passe (sans espaces)
+        password = gmail_password.replace(' ', '').strip()
+        
+        if not gmail_user or not password:
+            print("❌ Configuration email manquante")
+            print(f"   SMTP_USER = {gmail_user}")
+            print(f"   SMTP_PASSWORD = {'***' if password else 'VIDE'}")
+            return False
     
     print(f"📧 Envoi email : {gmail_user} → {to_email}")
     print(f"   Sujet : {subject[:60]}...")
@@ -121,3 +130,6 @@ def send_email(subject, body, to_email):
     
     print(f"   ❌ Impossible d'envoyer l'email")
     return False
+    except Exception as e:
+        print(f"❌ Erreur lors de l'envoi d'email : {str(e)}")
+        return False
