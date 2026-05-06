@@ -89,7 +89,7 @@ def send_email(subject, body, to_email):
     try:
         print(f"   🔄 Connexion SSL (port 465)...")
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context, timeout=30) as server:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context, timeout=60) as server:
             server.login(gmail_user, password)
             server.send_message(msg)
         print(f"   ✅ EMAIL ENVOYÉ AVEC SUCCÈS !")
@@ -107,7 +107,7 @@ def send_email(subject, body, to_email):
     try:
         print(f"   🔄 Connexion STARTTLS (port 587)...")
         context = ssl.create_default_context()
-        with smtplib.SMTP('smtp.gmail.com', 587, timeout=30) as server:
+        with smtplib.SMTP('smtp.gmail.com', 587, timeout=60) as server:
             server.ehlo()
             server.starttls(context=context)
             server.ehlo()
