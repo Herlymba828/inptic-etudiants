@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """API INPTIC RH - Gestion des employés"""
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from models import db, Etudiant
 from email_service import send_email
 from metrics import (
@@ -15,7 +15,7 @@ from datetime import datetime
 from sqlalchemy import inspect
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 # Configuration base de données
 DB_USER = os.getenv('POSTGRES_USER', 'inptic')
@@ -49,16 +49,27 @@ with app.app_context():
         print("✅ Base de données existante")
 
 # ==========================================
-# ROUTES API
+# ROUTES FRONTEND
 # ==========================================
 
 @app.route('/')
-def index():
+def frontend():
+    """Sert le frontend HTML"""
+    return send_from_directory('static', 'index.html')
+
+@app.route('/api')
+def api_info():
+    """Information sur l'API"""
     return jsonify({
-        'application': 'INPTIC RH',
+        'application': 'INPTIC RH API',
         'version': '2.0',
         'status': 'running',
-        'data_dir': DATA_DIR
+        'endpoints': {
+            'frontend': '/',
+            'api_employes': '/api/employes',
+            'health': '/health',
+            'metrics': '/metrics'
+        }
     })
 
 @app.route('/health')
