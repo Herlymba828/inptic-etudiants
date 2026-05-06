@@ -6,7 +6,7 @@ echo "🚀 Démarrage du relay SMTP Postfix..."
 # Mettre à jour les credentials depuis les variables d'environnement
 if [ -n "$SMTP_USER" ] && [ -n "$SMTP_PASSWORD" ]; then
     echo "📧 Configuration SMTP : $SMTP_USER"
-    echo "[smtp.gmail.com]:587 ${SMTP_USER}:${SMTP_PASSWORD}" > /etc/postfix/sasl_passwd
+    echo "[142.251.127.109]:587 ${SMTP_USER}:${SMTP_PASSWORD}" > /etc/postfix/sasl_passwd
     postmap /etc/postfix/sasl_passwd
     chmod 600 /etc/postfix/sasl_passwd
     chmod 600 /etc/postfix/sasl_passwd.db

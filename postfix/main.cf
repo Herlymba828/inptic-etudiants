@@ -27,10 +27,18 @@ smtpd_relay_restrictions = permit_mynetworks, reject_unauth_destination
 
 # ── Relay vers Gmail ─────────────────────────────────────────
 # Utiliser l'IP directe pour éviter les problèmes DNS de Postfix
-relayhost = [smtp.gmail.com]:587
+# IP de smtp.gmail.com : 142.251.127.109
+relayhost = [142.251.127.109]:587
 
 # Forcer la résolution via le système (pas le resolver interne Postfix)
 smtp_host_lookup = native
+
+# Désactiver la vérification du certificat par hostname (on utilise une IP)
+smtp_tls_security_level = encrypt
+smtp_tls_wrappermode = no
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_loglevel = 1
+smtp_tls_verify_cert_match = hostname, nexthop, dot-nexthop
 
 # Authentification SASL
 smtp_sasl_auth_enable = yes
