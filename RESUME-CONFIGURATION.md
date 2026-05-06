@@ -192,7 +192,7 @@ curl http://localhost:9090/-/healthy
 ### Grafana
 - URL : http://localhost:3001
 - Username : `admin`
-- Password : `admin`
+- Password : `admin123`
 
 ### Jenkins
 - URL : http://localhost:8080
