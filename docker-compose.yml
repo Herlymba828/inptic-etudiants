@@ -145,6 +145,9 @@ services:
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - MAIL_HOSTNAME=inptic-mail
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     restart: unless-stopped
     networks:
       - monitoring
