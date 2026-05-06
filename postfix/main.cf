@@ -12,7 +12,7 @@ myorigin = $mydomain
 
 # Interfaces d'écoute
 inet_interfaces = all
-inet_protocols = ipv4
+inet_protocols = all
 
 # Réseau autorisé à envoyer (réseau Docker interne)
 mynetworks = 127.0.0.0/8, 172.16.0.0/12, 10.0.0.0/8
@@ -26,10 +26,11 @@ local_recipient_maps =
 smtpd_relay_restrictions = permit_mynetworks, reject_unauth_destination
 
 # ── Relay vers Gmail ─────────────────────────────────────────
+# Utiliser l'IP directe pour éviter les problèmes DNS de Postfix
 relayhost = [smtp.gmail.com]:587
 
-# DNS explicite (utiliser les DNS publics de Google)
-smtp_dns_support_level = enabled
+# Forcer la résolution via le système (pas le resolver interne Postfix)
+smtp_host_lookup = native
 
 # Authentification SASL
 smtp_sasl_auth_enable = yes
