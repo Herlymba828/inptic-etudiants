@@ -136,6 +136,19 @@ services:
       - monitoring
     user: root
 
+  postfix:
+    build:
+      context: ./postfix
+      dockerfile: Dockerfile
+    container_name: postfix-relay
+    environment:
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - MAIL_HOSTNAME=inptic-mail
+    restart: unless-stopped
+    networks:
+      - monitoring
+
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
     container_name: postgres-exporter

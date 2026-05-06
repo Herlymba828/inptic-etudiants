@@ -7,6 +7,10 @@
 ACCES.md
 CREDENTIALS-PRODUCTION.md
 
+# Postfix credentials (contient des mots de passe)
+postfix/sasl_passwd
+postfix/sasl_passwd.db
+
 # Python
 __pycache__/
 *.py[cod]

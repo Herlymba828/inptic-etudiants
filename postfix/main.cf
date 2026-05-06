@@ -1,0 +1,54 @@
+# ============================================================
+# Postfix - Configuration Relay SMTP vers Gmail
+# ============================================================
+
+# Identité du serveur
+myhostname = inptic-mail
+mydomain = inptic.local
+myorigin = $mydomain
+
+# Interfaces d'écoute (tous les réseaux Docker)
+inet_interfaces = all
+inet_protocols = ipv4
+
+# Réseau autorisé à envoyer (réseau Docker interne)
+mynetworks = 127.0.0.0/8, 172.16.0.0/12, 10.0.0.0/8
+
+# Pas de livraison locale
+mydestination =
+local_transport = error: local mail delivery is disabled
+local_recipient_maps =
+
+# ── Relay vers Gmail ─────────────────────────────────────────
+relayhost = [smtp.gmail.com]:587
+
+# Authentification SASL
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_sasl_tls_security_options = noanonymous
+smtp_sasl_mechanism_filter = plain, login
+
+# TLS
+smtp_use_tls = yes
+smtp_tls_security_level = encrypt
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_loglevel = 1
+
+# Timeouts (augmentés pour connexions lentes)
+smtp_connect_timeout = 60s
+smtp_data_done_timeout = 120s
+smtp_helo_timeout = 60s
+smtp_mail_timeout = 60s
+smtp_rcpt_timeout = 60s
+
+# Logs
+maillog_file = /dev/stdout
+
+# Limites
+message_size_limit = 10240000
+mailbox_size_limit = 0
+
+# Désactiver les bounces locaux
+bounce_queue_lifetime = 1d
+maximal_queue_lifetime = 1d
