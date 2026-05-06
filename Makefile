@@ -5,7 +5,7 @@
 
 .PHONY: help up down restart build logs ps clean backup restore \
         jenkins-url grafana-url prometheus-url reload-prometheus \
-        webhook-setup status
+        webhook-setup status deploy deploy-vm
 
 # Couleurs
 GREEN  := \033[32m
@@ -212,3 +212,18 @@ shell-db: ## Ouvre psql dans le conteneur PostgreSQL
 
 shell-jenkins: ## Ouvre un shell dans le conteneur Jenkins
 	docker exec -it jenkins bash
+
+# ── Déploiement VM ────────────────────────────────────────────────────
+
+deploy: ## Déploie l'infrastructure localement avec le script automatisé
+	@chmod +x scripts/deploy.sh
+	@./scripts/deploy.sh
+
+deploy-vm: ## Déploie sur une VM distante (Usage: make deploy-vm VM=user@ip)
+	@chmod +x scripts/deploy-to-vm.sh
+	@if [ -z "$(VM)" ]; then \
+		echo "$(YELLOW)Usage: make deploy-vm VM=user@ip$(RESET)"; \
+		echo "Exemple: make deploy-vm VM=ubuntu@192.168.1.100"; \
+		exit 1; \
+	fi
+	@./scripts/deploy-to-vm.sh $(VM)
