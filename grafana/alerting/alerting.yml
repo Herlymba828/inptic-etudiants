@@ -3,6 +3,11 @@ apiVersion: 1
 # ============================================================
 # Grafana Unified Alerting — Contact points
 # ============================================================
+# NOTE: Les variables d'environnement ne fonctionnent pas dans les fichiers
+# de provisioning Grafana. Vous devez configurer les contact points
+# manuellement via l'interface Grafana ou mettre une adresse email en dur.
+# ============================================================
+
 contactPoints:
   - orgId: 1
     name: email-inptic-rh
@@ -10,7 +15,7 @@ contactPoints:
       - uid: email-inptic-rh-receiver
         type: email
         settings:
-          addresses: ${NOTIFICATION_EMAIL}
+          addresses: admin@example.com
           singleEmail: true
         disableResolveMessage: false
 
