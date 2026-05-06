@@ -1,0 +1,114 @@
+global:
+  resolve_timeout: 5m
+  # SMTP Gmail — valeurs lues depuis les variables d'env du conteneur
+  # Le conteneur alertmanager reçoit ces vars via docker-compose env_file
+  smtp_smarthost:      'smtp.gmail.com:587'
+  smtp_from:           'INPTIC RH Alertmanager <alertmanager@inptic.local>'
+  smtp_auth_username:  'GMAIL_USER_PLACEHOLDER'
+  smtp_auth_password:  'GMAIL_PASSWORD_PLACEHOLDER'
+  smtp_require_tls:    true
+  smtp_hello:          'inptic-rh'
+
+# ── Routage des alertes ───────────────────────────────────────────────
+route:
+  receiver: 'email-default'
+  group_by: ['alertname', 'service', 'severity']
+  group_wait:      30s
+  group_interval:  5m
+  repeat_interval: 4h
+
+  routes:
+    # Alertes critiques : notification immédiate, répétition toutes les heures
+    - matchers:
+        - severity = critical
+      receiver: 'email-critical'
+      group_wait:      10s
+      repeat_interval: 1h
+      continue: false
+
+    # Alertes warning : groupées, répétition toutes les 4h
+    - matchers:
+        - severity = warning
+      receiver: 'email-default'
+      group_wait:      1m
+      repeat_interval: 4h
+      continue: false
+
+# ── Receivers ─────────────────────────────────────────────────────────
+receivers:
+  - name: 'email-default'
+    email_configs:
+      - to: 'NOTIFICATION_EMAIL_PLACEHOLDER'
+        send_resolved: true
+        require_tls: true
+        headers:
+          Subject: '[INPTIC RH] {{ .Status | toUpper }} — {{ .CommonLabels.alertname }}'
+        html: |
+          <!DOCTYPE html>
+          <html>
+          <body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px">
+          <div style="max-width:600px;margin:auto;background:white;border-radius:8px;overflow:hidden">
+            <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);color:white;padding:20px;text-align:center">
+              <h2 style="margin:0">🔔 INPTIC RH — Alerte {{ .Status | toUpper }}</h2>
+            </div>
+            <div style="padding:20px">
+              {{ range .Alerts }}
+              <div style="border-left:4px solid {{ if eq .Labels.severity "critical" }}#e74c3c{{ else }}#f39c12{{ end }};padding:10px;margin:10px 0;background:#f8f9fa">
+                <strong>{{ .Labels.alertname }}</strong><br>
+                <small>Service : {{ .Labels.service }}</small><br>
+                <p>{{ .Annotations.description }}</p>
+                <small>Depuis : {{ .StartsAt.Format "02/01/2006 15:04:05" }}</small>
+              </div>
+              {{ end }}
+            </div>
+            <div style="background:#1a5276;color:rgba(255,255,255,0.8);padding:10px;text-align:center;font-size:12px">
+              INPTIC RH Monitoring — Alertmanager
+            </div>
+          </div>
+          </body>
+          </html>
+
+  - name: 'email-critical'
+    email_configs:
+      - to: 'NOTIFICATION_EMAIL_PLACEHOLDER'
+        send_resolved: true
+        require_tls: true
+        headers:
+          Subject: '🚨 [INPTIC RH] CRITIQUE — {{ .CommonLabels.alertname }}'
+        html: |
+          <!DOCTYPE html>
+          <html>
+          <body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px">
+          <div style="max-width:600px;margin:auto;background:white;border-radius:8px;overflow:hidden">
+            <div style="background:#c0392b;color:white;padding:20px;text-align:center">
+              <h2 style="margin:0">🚨 ALERTE CRITIQUE — INPTIC RH</h2>
+            </div>
+            <div style="padding:20px">
+              {{ range .Alerts }}
+              <div style="border-left:4px solid #e74c3c;padding:10px;margin:10px 0;background:#fdf2f2">
+                <strong style="color:#c0392b">{{ .Labels.alertname }}</strong><br>
+                <small>Service : {{ .Labels.service }}</small><br>
+                <p>{{ .Annotations.description }}</p>
+                <small>Depuis : {{ .StartsAt.Format "02/01/2006 15:04:05" }}</small>
+              </div>
+              {{ end }}
+            </div>
+          </div>
+          </body>
+          </html>
+
+# ── Inhibitions ───────────────────────────────────────────────────────
+inhibit_rules:
+  # Si une alerte critique est active sur un service,
+  # supprimer les warnings du même service
+  - source_matchers:
+      - severity = critical
+    target_matchers:
+      - severity = warning
+    equal: ['service']
+
+  # Si l'app est down, ne pas alerter sur la latence ou les erreurs
+  - source_matchers:
+      - alertname = AppDown
+    target_matchers:
+      - alertname =~ "HighLatencyP95|HighErrorRate|HighConcurrentRequests"

@@ -1,0 +1,42 @@
+# Plugins Jenkins essentiels pour INPTIC RH CI/CD
+# Format : plugin-id:version  (ou juste plugin-id pour la dernière version stable)
+
+# ── Pipeline ──────────────────────────────────────────────────────────
+workflow-aggregator:latest
+pipeline-stage-view:latest
+pipeline-graph-analysis:latest
+blueocean:latest
+
+# ── Git & GitHub ──────────────────────────────────────────────────────
+git:latest
+github:latest
+github-branch-source:latest
+gitlab-plugin:latest
+
+# ── Docker ────────────────────────────────────────────────────────────
+docker-workflow:latest
+docker-plugin:latest
+
+# ── Configuration as Code ─────────────────────────────────────────────
+configuration-as-code:latest
+
+# ── Credentials ───────────────────────────────────────────────────────
+credentials:latest
+credentials-binding:latest
+plain-credentials:latest
+
+# ── Notifications ─────────────────────────────────────────────────────
+mailer:latest
+email-ext:latest
+
+# ── Qualité & Tests ───────────────────────────────────────────────────
+warnings-ng:latest
+junit:latest
+cobertura:latest
+
+# ── Utilitaires ───────────────────────────────────────────────────────
+timestamper:latest
+ansicolor:latest
+ws-cleanup:latest
+build-timeout:latest
+rebuild:latest

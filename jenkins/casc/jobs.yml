@@ -1,0 +1,53 @@
+# ============================================================
+# Définition du job Jenkins — Pipeline INPTIC RH
+# Déclenché automatiquement à chaque push sur main
+# ============================================================
+jobs:
+  - script: |
+      multibranchPipelineJob('inptic-rh') {
+        displayName('INPTIC RH — Pipeline CI/CD')
+        description('Build, test et déploiement automatique à chaque push Git')
+
+        branchSources {
+          github {
+            id('inptic-rh-source')
+            repoOwner('${GIT_ORG:-votre-org}')
+            repository('inptic-rh')
+            credentialsId('git-credentials')
+            traits {
+              // Découverte des branches
+              gitHubBranchDiscovery {
+                strategyId(1)  // 1 = toutes les branches
+              }
+              // Découverte des PRs
+              gitHubPullRequestDiscovery {
+                strategyId(1)
+              }
+              // Filtrer : builder seulement main + branches feature/*
+              headWildcardFilter {
+                includes('main feature/* hotfix/*')
+                excludes('')
+              }
+            }
+          }
+        }
+
+        factory {
+          workflowBranchProjectFactory {
+            scriptPath('Jenkinsfile')
+          }
+        }
+
+        triggers {
+          // Scan toutes les heures si le webhook ne fonctionne pas
+          periodicFolderTrigger {
+            interval('1h')
+          }
+        }
+
+        orphanedItemStrategy {
+          discardOldItems {
+            numToKeep(5)
+          }
+        }
+      }

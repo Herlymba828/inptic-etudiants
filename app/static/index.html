@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INPTIC — Gestion des Étudiants</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🎓</span>
+                    <h1>INPTIC</h1>
+                </div>
+                <nav class="nav">
+                    <button class="nav-btn active" data-view="dashboard">
+                        <span>📊</span> Dashboard
+                    </button>
+                    <button class="nav-btn" data-view="etudiants">
+                        <span>👥</span> Étudiants
+                    </button>
+                    <button class="nav-btn" data-view="ajouter">
+                        <span>➕</span> Ajouter
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view active">
+                <h2 class="section-title">📊 Tableau de bord</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-total">—</div>
+                            <div class="stat-label">Étudiants inscrits</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎓</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-filieres">—</div>
+                            <div class="stat-label">Filières</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="stat-annees">—</div>
+                            <div class="stat-label">Années</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Répartition par filière</h3>
+                        <div id="chart-filieres" class="chart-content"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Répartition par année</h3>
+                        <div id="chart-annees" class="chart-content"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Liste Étudiants View -->
+            <section id="view-etudiants" class="view">
+                <div class="section-header">
+                    <h2 class="section-title">👥 Liste des étudiants</h2>
+                    <button class="btn btn-primary" onclick="showView('ajouter')">
+                        ➕ Ajouter un étudiant
+                    </button>
+                </div>
+
+                <!-- Filtres -->
+                <div class="filters">
+                    <input type="text" id="search-input" class="input" placeholder="🔍 Rechercher (nom, prénom, email)...">
+                    <select id="filter-filiere" class="input">
+                        <option value="">Toutes les filières</option>
+                    </select>
+                    <select id="filter-annee" class="input">
+                        <option value="">Toutes les années</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="resetFilters()">Réinitialiser</button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Email</th>
+                                <th>Filière</th>
+                                <th>Année</th>
+                                <th>Date d'inscription</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="etudiants-tbody">
+                            <tr>
+                                <td colspan="8" class="loading">Chargement...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination"></div>
+            </section>
+
+            <!-- Ajouter Étudiant View -->
+            <section id="view-ajouter" class="view">
+                <h2 class="section-title">➕ Ajouter un étudiant</h2>
+                
+                <form id="form-ajouter" class="form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-nom">Nom *</label>
+                            <input type="text" id="input-nom" class="input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-prenom">Prénom *</label>
+                            <input type="text" id="input-prenom" class="input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-email">Email *</label>
+                        <input type="email" id="input-email" class="input" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-filiere">Filière *</label>
+                            <select id="input-filiere" class="input" required>
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Informatique">Informatique</option>
+                                <option value="Réseaux">Réseaux</option>
+                                <option value="Télécommunications">Télécommunications</option>
+                                <option value="Électronique">Électronique</option>
+                                <option value="Génie Logiciel">Génie Logiciel</option>
+                                <option value="Cybersécurité">Cybersécurité</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-annee">Année *</label>
+                            <select id="input-annee" class="input" required>
+                                <option value="">-- Sélectionner --</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            ✅ Enregistrer
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            🔄 Réinitialiser
+                        </button>
+                    </div>
+                </form>
+
+                <div id="form-message" class="message"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modal Modifier -->
+    <div id="modal-modifier" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Modifier l'étudiant</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="form-modifier" class="form">
+                <input type="hidden" id="edit-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-nom">Nom *</label>
+                        <input type="text" id="edit-nom" class="input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-prenom">Prénom *</label>
+                        <input type="text" id="edit-prenom" class="input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-email">Email *</label>
+                    <input type="email" id="edit-email" class="input" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-filiere">Filière *</label>
+                        <select id="edit-filiere" class="input" required>
+                            <option value="Informatique">Informatique</option>
+                            <option value="Réseaux">Réseaux</option>
+                            <option value="Télécommunications">Télécommunications</option>
+                            <option value="Électronique">Électronique</option>
+                            <option value="Génie Logiciel">Génie Logiciel</option>
+                            <option value="Cybersécurité">Cybersécurité</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-annee">Année *</label>
+                        <select id="edit-annee" class="input" required>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

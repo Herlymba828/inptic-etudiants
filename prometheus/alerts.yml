@@ -1,0 +1,112 @@
+groups:
+  - name: inptic-rh-app
+    interval: 30s
+    rules:
+
+      - alert: AppDown
+        expr: up{job="flask-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service:  flask-app
+        annotations:
+          summary:     "Application INPTIC RH inaccessible"
+          description: "L'application Flask ne répond plus depuis plus d'1 minute."
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          service:  flask-app
+        annotations:
+          summary:     "Taux d'erreurs HTTP > 5%"
+          description: "Plus de 5% des requêtes retournent une erreur 5xx depuis 2 minutes."
+
+      - alert: HighLatencyP95
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          service:  flask-app
+        annotations:
+          summary:     "Latence API élevée (p95 > 1s)"
+          description: "Le 95e percentile de latence dépasse 1 seconde depuis 5 minutes."
+
+      - alert: EmailQueueFull
+        expr: email_queue_size > 150
+        for: 5m
+        labels:
+          severity: warning
+          service:  flask-app
+        annotations:
+          summary:     "Queue email presque pleine"
+          description: "La queue email contient plus de 150 messages en attente."
+
+      - alert: HighConcurrentRequests
+        expr: sum(http_requests_in_progress) > 50
+        for: 2m
+        labels:
+          severity: warning
+          service:  flask-app
+        annotations:
+          summary:     "Trop de requêtes simultanées (> 50)"
+          description: "Plus de 50 requêtes HTTP en cours de traitement depuis 2 minutes."
+
+  - name: inptic-rh-database
+    interval: 30s
+    rules:
+
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service:  postgresql
+        annotations:
+          summary:     "PostgreSQL inaccessible"
+          description: "Le postgres-exporter ne peut plus joindre PostgreSQL."
+
+      - alert: PostgresHighConnections
+        expr: |
+          pg_stat_activity_count{datname!~"template.*|postgres"}
+          /
+          pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service:  postgresql
+        annotations:
+          summary:     "PostgreSQL : connexions > 80% du maximum"
+          description: "Le nombre de connexions actives dépasse 80% de max_connections."
+
+      - alert: PostgresSlowQueries
+        expr: |
+          rate(pg_stat_activity_max_tx_duration{datname!~"template.*"}[5m]) > 30
+        for: 5m
+        labels:
+          severity: warning
+          service:  postgresql
+        annotations:
+          summary:     "Requêtes PostgreSQL lentes (> 30s)"
+          description: "Des transactions actives durent plus de 30 secondes."
+
+  - name: inptic-rh-infrastructure
+    interval: 60s
+    rules:
+
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service:  prometheus
+        annotations:
+          summary:     "Prometheus inaccessible"
+          description: "Prometheus ne répond plus depuis 2 minutes."
