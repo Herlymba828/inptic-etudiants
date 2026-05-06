@@ -1,21 +1,15 @@
 FROM jenkins/jenkins:lts-jdk17
 
-# Désactiver le wizard de setup (géré par JCasC)
+# Désactiver le wizard de setup
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
-ENV CASC_JENKINS_CONFIG="/var/jenkins_home/casc_configs"
 
-# Passer root pour installer Docker CLI et les plugins
 USER root
 
-# Installer Docker CLI (pour builder les images depuis Jenkins)
+# Installer Docker CLI
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     gnupg \
-    lsb-release \
-    python3 \
-    python3-pip \
-    python3-venv \
     && install -m 0755 -d /etc/apt/keyrings \
     && curl -fsSL https://download.docker.com/linux/debian/gpg \
        | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
@@ -24,15 +18,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
        https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
        > /etc/apt/sources.list.d/docker.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends docker-ce-cli docker-compose-plugin \
+    && apt-get install -y --no-install-recommends docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
 
-# Ajouter jenkins au groupe docker
 RUN groupadd -f docker && usermod -aG docker jenkins
+
+# Copier le script d'initialisation Groovy
+COPY init.groovy.d/ /usr/share/jenkins/ref/init.groovy.d/
 
 USER jenkins
 
-# Installer les plugins Jenkins via le plugin manager
+# Installer les plugins
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
 
