@@ -13,16 +13,17 @@ def send_email(subject, body, to_email):
     Émetteur : ingridboussoyi@gmail.com
     Destinataire : herlymba828@gmail.com
     """
-    gmail_user = os.getenv('GMAIL_USER', 'ingridboussoyi@gmail.com')
-    gmail_password = os.getenv('GMAIL_APP_PASSWORD', '')
+    # Utiliser les variables SMTP_* du .env
+    gmail_user = os.getenv('SMTP_USER', os.getenv('GMAIL_USER', 'ingridboussoyi@gmail.com'))
+    gmail_password = os.getenv('SMTP_PASSWORD', os.getenv('GMAIL_APP_PASSWORD', ''))
     
     # Nettoyer le mot de passe (sans espaces)
     password = gmail_password.replace(' ', '').strip()
     
     if not gmail_user or not password:
         print("❌ Configuration email manquante")
-        print(f"   GMAIL_USER = {gmail_user}")
-        print(f"   GMAIL_APP_PASSWORD = {'***' if password else 'VIDE'}")
+        print(f"   SMTP_USER = {gmail_user}")
+        print(f"   SMTP_PASSWORD = {'***' if password else 'VIDE'}")
         return False
     
     print(f"📧 Envoi email : {gmail_user} → {to_email}")
