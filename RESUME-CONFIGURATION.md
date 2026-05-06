@@ -195,7 +195,7 @@ curl http://localhost:9090/-/healthy
 - Password : `admin123`
 
 ### Jenkins
-- URL : http://localhost:8080
+- URL : http://localhost:8080/jenkins
 - Username : `admin`
 - Password : `admin`
 

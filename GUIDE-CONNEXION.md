@@ -92,7 +92,7 @@ docker-compose up -d grafana
 
 ### Accès
 
-**URL** : http://localhost:8080
+**URL** : http://localhost:8080/jenkins
 
 **Credentials** :
 - **Username** : `admin`
@@ -107,7 +107,7 @@ Jenkins est configuré avec Configuration as Code (CasC) :
 
 ### Utilisation
 
-1. Ouvrez http://localhost:8080
+1. Ouvrez http://localhost:8080/jenkins
 2. Connectez-vous avec `admin/admin`
 3. Les jobs sont disponibles dans le dashboard
 
@@ -238,7 +238,7 @@ curl http://localhost:9090/-/healthy
 curl http://localhost:9093/-/healthy
 
 # Tester Jenkins
-curl http://localhost:8080/login
+curl http://localhost:8080/jenkins/login
 ```
 
 ### Voir les Logs
@@ -311,7 +311,7 @@ Pour accéder aux services depuis un autre appareil sur le même réseau :
    ```
    http://192.168.1.100:5000    (Flask)
    http://192.168.1.100:3001    (Grafana)
-   http://192.168.1.100:8080    (Jenkins)
+   http://192.168.1.100:8080/jenkins    (Jenkins)
    http://192.168.1.100:9090    (Prometheus)
    ```
 
@@ -340,7 +340,7 @@ docker restart grafana
 ### Jenkins
 
 **Via l'Interface** :
-1. Connectez-vous à http://localhost:8080
+1. Connectez-vous à http://localhost:8080/jenkins
 2. Cliquez sur "admin" (en haut à droite)
 3. Cliquez sur "Configure"
 4. Changez le mot de passe
