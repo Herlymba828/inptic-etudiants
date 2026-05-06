@@ -1,22 +1,24 @@
 global:
-  scrape_interval: 5s
-  evaluation_interval: 5s
+  scrape_interval: 15s
+  evaluation_interval: 15s
   external_labels:
     monitor: 'inptic-monitor'
+    cluster: 'production'
 
-# Alertmanager configuration (optionnel, peut être activé plus tard)
-# alerting:
-#   alertmanagers:
-#     - static_configs:
-#         - targets: ['alertmanager:9093']
+# Configuration Alertmanager
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
 
-# Règles d'alerte (optionnel)
-# rule_files:
-#   - 'alerts/*.yml'
+# Règles d'alerte
+rule_files:
+  - 'alerts.yml'
 
 scrape_configs:
+  # Application Flask
   - job_name: 'flask-app'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
       - targets: ['app:5000']
         labels:
@@ -25,8 +27,35 @@ scrape_configs:
     metrics_path: '/metrics'
     scheme: 'http'
 
+  # Prometheus lui-même
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
         labels:
           service: 'prometheus'
+
+  # PostgreSQL Exporter
+  - job_name: 'postgres'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgresql'
+          database: 'inptic_db'
+
+  # Alertmanager
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+        labels:
+          service: 'alertmanager'
+
+  # Jenkins (si métriques activées)
+  - job_name: 'jenkins'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['jenkins:8080']
+        labels:
+          service: 'jenkins'
+    metrics_path: '/prometheus'
+    scheme: 'http'
