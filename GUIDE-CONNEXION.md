@@ -37,14 +37,14 @@ Guide rapide pour accéder à tous les services de l'infrastructure INPTIC.
 
 **Credentials** :
 - **Username** : `admin`
-- **Password** : `admin123`
+- **Password** : `GrafanaInptic2024`
 
 ### Première Connexion
 
 1. Ouvrez http://localhost:3001
 2. Entrez :
    - Email ou nom d'utilisateur : `admin`
-   - Mot de passe : `admin123`
+   - Mot de passe : `GrafanaInptic2024`
 3. Cliquez sur "Log in"
 4. (Optionnel) Grafana vous demandera de changer le mot de passe
 
@@ -92,11 +92,11 @@ docker-compose up -d grafana
 
 ### Accès
 
-**URL** : http://localhost:8080/jenkins
+**URL** : http://localhost:8080
 
 **Credentials** :
 - **Username** : `admin`
-- **Password** : `admin`
+- **Password** : `JenkinsInptic2024`
 
 ### Configuration
 
@@ -107,8 +107,8 @@ Jenkins est configuré avec Configuration as Code (CasC) :
 
 ### Utilisation
 
-1. Ouvrez http://localhost:8080/jenkins
-2. Connectez-vous avec `admin/admin`
+1. Ouvrez http://localhost:8080
+2. Connectez-vous avec `admin/JenkinsInptic2024`
 3. Les jobs sont disponibles dans le dashboard
 
 ---

@@ -119,7 +119,7 @@ services:
       dockerfile: Dockerfile
     container_name: jenkins
     environment:
-      - JENKINS_OPTS=${JENKINS_OPTS:---prefix=/jenkins}
+      - JENKINS_OPTS=${JENKINS_OPTS:-}
       - JAVA_OPTS=${JAVA_OPTS:--Djenkins.install.runSetupWizard=false}
       - CASC_JENKINS_CONFIG=/var/jenkins_home/casc
       - JENKINS_ADMIN_USER=${JENKINS_ADMIN_USER:-admin}

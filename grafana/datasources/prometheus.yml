@@ -12,6 +12,3 @@ datasources:
       timeInterval: "5s"
       queryTimeout: "30s"
       httpMethod: "POST"
-      exemplarTraceIdDestinations:
-        - name: trace_id
-          datasourceUid: prometheus
