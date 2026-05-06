@@ -13,9 +13,6 @@ github-branch-source:latest
 # ── Docker ────────────────────────────────────────────────────────────
 docker-workflow:latest
 
-# ── Configuration as Code ─────────────────────────────────────────────
-configuration-as-code:latest
-
 # ── Credentials ───────────────────────────────────────────────────────
 credentials:latest
 credentials-binding:latest
