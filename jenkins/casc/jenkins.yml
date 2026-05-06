@@ -1,77 +1,38 @@
 # ============================================================
 # Jenkins Configuration as Code (JCasC)
-# Chargé automatiquement au démarrage — persistant via volume
 # ============================================================
 
 jenkins:
   systemMessage: |
-    ╔══════════════════════════════════════════╗
-    ║   INPTIC RH — Jenkins CI/CD v4          ║
-    ║   Pipeline automatique sur push Git      ║
-    ╚══════════════════════════════════════════╝
+    INPTIC RH — Jenkins CI/CD
+    Pipeline automatique sur push Git
 
   numExecutors: 4
   mode: NORMAL
   scmCheckoutRetryCount: 2
 
-  # ── Sécurité ──────────────────────────────────────────────
   securityRealm:
     local:
       allowsSignup: false
       users:
         - id: "admin"
           name: "Administrateur INPTIC"
-          password: "${JENKINS_ADMIN_PASSWORD:-admin123}"
+          password: "${JENKINS_ADMIN_PASSWORD:-JenkinsInptic2024}"
 
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
 
-  # ── Credentials stockés dans Jenkins (référencés dans le pipeline) ──
-  # Les valeurs réelles sont injectées via les variables d'environnement
-  # du conteneur Jenkins ou via les secrets Docker.
-
-# ── Outils ────────────────────────────────────────────────────────────
 tool:
   git:
     installations:
       - name: "Default"
         home: "git"
 
-# ── Notifications email ───────────────────────────────────────────────
 unclassified:
-  mailer:
-    smtpHost: "smtp.gmail.com"
-    smtpPort: "587"
-    useSsl: false
-    useTls: true
-    authentication:
-      username: "${GMAIL_USER}"
-      password: "${GMAIL_APP_PASSWORD}"
-    replyToAddress: "${GMAIL_USER}"
-    defaultSuffix: ""
-
-  # Timestamper dans les logs de build
-  timestamperConfig:
-    allPipelines: true
-
-  # Couleurs ANSI dans les logs
-  ansiColorBuildWrapper:
-    globalColorMapName: "xterm"
-
-  # Localisation
   location:
     url: "http://localhost:8080/"
-    adminAddress: "${GMAIL_USER}"
+    adminAddress: "herlymba828@gmail.com"
 
-# ── Pipeline partagé (Shared Library) ────────────────────────────────
-# Décommentez si vous utilisez une shared library Git
-# globalLibraries:
-#   libraries:
-#     - name: "inptic-shared"
-#       defaultVersion: "main"
-#       retriever:
-#         modernSCM:
-#           scm:
-#             git:
-#               remote: "https://github.com/votre-org/jenkins-shared-library.git"
+  timestamperConfig:
+    allPipelines: true
