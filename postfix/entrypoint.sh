@@ -10,6 +10,10 @@ if [ -n "$SMTP_USER" ] && [ -n "$SMTP_PASSWORD" ]; then
     postmap /etc/postfix/sasl_passwd
     chmod 600 /etc/postfix/sasl_passwd
     chmod 600 /etc/postfix/sasl_passwd.db
+    # Appliquer l'IP directe dans la config
+    postconf -e "relayhost = [142.251.127.109]:587"
+    postconf -e "inet_protocols = all"
+    postconf -e "smtp_host_lookup = native"
     echo "✅ Credentials SMTP configurés"
 fi
 
